@@ -15,6 +15,7 @@ def graphEncoding(energy,
         else:
             elementAppearanceNumber[e] = 1
 
+    ### 单个原子受力的计算方法有误
     atomCalculationNumber = np.array([list(elementAppearanceNumber.values())])
     energyCalculationNumber = np.array([energy])
     x, residuals, rank, s = np.linalg.lstsq(atomCalculationNumber, energyCalculationNumber, rcond=None)
@@ -30,27 +31,12 @@ def graphEncoding(energy,
         G.add_node(i, element = elementName[i])
         G.add_node(i, atomForce = elementAppearanceNumber[elementName[i]])
 
-        ## 以下逻辑判断部分需要修改
-        ### 元素序数，0/1 非金/金
-
-        if elementName[i] == 'Cl':
-            G.add_node(i, elementNumber = 17)
-            G.add_node(i, isMetal = 0)
-        elif elementName[i] == 'Na':
-            G.add_node(i, elementNumber = 11)
-            G.add_node(i, isMetal = 1)
-        elif elementName[i] == 'K':
-            G.add_node(i, elementNumber = 19)
-            G.add_node(i, isMetal = 1)
-        elif elementName[i] == 'W':
-            G.add_node(i, elementNumber = 74)
-            G.add_node(i, isMetal = 1)
-        elif elementName[i] == 'O':
-            G.add_node(i, elementNumber = 8)
-            G.add_node(i, isMetal = 0)
-        elif elementName[i] == 'Co':
-            G.add_node(i, elementNumber = 27)
-            G.add_node(i, isMetal = 1)
+        #for e,element in enumerate(elementName):
+        if elementName[i] in elementsDict:
+            G.add_node(i, elementNumber = elementsDict[elementName[i]]['elementNumber'])
+            G.add_node(i, isMetal = elementsDict[elementName[i]]['isMetal'])
+        else:
+            print(f"Element {elementName[i]} not found in the dictionary.")
         i += 1
     
     for j in range(len(G.nodes())):
